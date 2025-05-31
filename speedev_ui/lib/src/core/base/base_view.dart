@@ -10,11 +10,11 @@ class BaseView<T extends BaseViewModel> extends StatefulWidget {
   final Function(BuildContext context, T viewModel)? onDispose;
 
   @override
-  State<BaseView> createState() => _BaseViewState();
+  State<BaseView<T>> createState() => _BaseViewState<T>();
 }
 
-class _BaseViewState extends State<BaseView> {
-  late BaseViewModel viewModel;
+class _BaseViewState<T extends BaseViewModel> extends State<BaseView<T>> {
+  late T viewModel;
 
   @override
   void initState() {
@@ -33,7 +33,11 @@ class _BaseViewState extends State<BaseView> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: viewModel,
-      child: widget.builder(context, viewModel),
+      child: Consumer<T>(
+        builder: (context, value, child) {
+          return widget.builder(context, value);
+        },
+      ),
     );
   }
 }
